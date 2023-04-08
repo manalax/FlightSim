@@ -101,6 +101,15 @@ public class PlayerController : MonoBehaviour {
         }
     }
 
+    public void OnSwitchLockOnTarget(InputAction.CallbackContext context) {
+        if (plane == null) return;
+
+        if (context.phase == InputActionPhase.Performed) {
+            plane.SelectNearestTarget();
+        }
+    }
+
+
     void Update() {
         if (plane == null) return;
         if (aiController.enabled) return;

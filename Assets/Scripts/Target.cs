@@ -25,7 +25,7 @@ public class Target : MonoBehaviour {
         }
     }
 
-    public Plane Plane { get; private set; }
+    public Plane Plane { get; set; }
 
     new Rigidbody rigidbody;
 

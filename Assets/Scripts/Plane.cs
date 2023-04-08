@@ -110,6 +110,9 @@ public class Plane : MonoBehaviour {
     Transform cannonSpawnPoint;
     [SerializeField]
     GameObject bulletPrefab;
+    [SerializeField]
+    [Tooltip("Distance at which the plane can acquire targets. Only relevant for the player.")]
+    float radarDistance;
 
     new PlaneAnimation animation;
 
@@ -467,6 +470,44 @@ public class Plane : MonoBehaviour {
                 animation.ShowMissileGraphic(index, false);
                 break;
             }
+        }
+    }
+
+    public void SelectNearestTarget(){
+        if (Dead) return;
+
+        List<Plane> planesInRadarDistance = new List<Plane>();
+        Collider[] hitColliders = Physics.OverlapSphere(Rigidbody.position, radarDistance);
+        foreach (var hitCollider in hitColliders)
+        {
+            // either returns a plane if the collider is associated with one, or null.
+            // also must ensure that the plane's own collider is not added to the list.
+            Plane detectedPlane = hitCollider.GetComponent<Plane>();
+            if (hitCollider.GetComponent<Plane>() != null && detectedPlane != this && !detectedPlane.Dead)
+            {
+                planesInRadarDistance.Add(detectedPlane);
+            }
+        }
+
+        if (planesInRadarDistance.Count == 0)
+        {
+            target = null;
+            return;
+        }
+        else
+        {
+            Plane closestTarget = null;
+            float closestTargetDistance = radarDistance;
+            foreach (var plane in planesInRadarDistance)
+            {
+                float distanceBetweenTarget = Vector3.Distance(plane.Rigidbody.position, Rigidbody.position);
+                if (distanceBetweenTarget < closestTargetDistance)
+                {
+                    closestTarget = plane;
+                    closestTargetDistance = distanceBetweenTarget;
+                }
+            }
+            Target.Plane = closestTarget.GetComponent<Plane>();
         }
     }
 

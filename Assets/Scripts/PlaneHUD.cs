@@ -204,9 +204,11 @@ public class PlaneHUD : MonoBehaviour {
     }
 
     void UpdateWeapons() {
-        if (plane.Target == null) {
+        if (plane.Target == null || plane.Target.Plane.Dead) {
             targetBoxGO.SetActive(false);
             missileLockGO.SetActive(false);
+            targetArrowGO.SetActive(false);
+            reticleGO.SetActive(false);
             return;
         }
 
